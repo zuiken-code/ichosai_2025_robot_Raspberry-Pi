@@ -1,7 +1,7 @@
 import cv2
 from flask import Flask, render_template, Response
 
-from camera import Camera
+from components.camera import Camera
 
 app = Flask(__name__)
 
