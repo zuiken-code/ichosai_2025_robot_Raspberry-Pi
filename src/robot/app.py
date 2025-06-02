@@ -1,10 +1,22 @@
 import cv2
+import time
 from flask import Flask, render_template, Response, jsonify
 
+import threading
 from components.camera import Camera
+import components.right_controller as right_controller
 
 app = Flask(__name__)
 
+
+def update_joycon_data():
+    global joycon_data
+    while True:
+        joycon_data = right_controller.get_joycon_data()
+
+# スレッドでバックグラウンド取得
+t = threading.Thread(target=update_joycon_data, daemon=True)
+t.start()
 
 @app.route("/")
 def index():
@@ -32,7 +44,7 @@ def video_feed():
 
 @app.route("/status")
 def check_joycon():
-	return jsonify({"status": "disconnected"})
+	return jsonify(joycon_data)
 
 if __name__ == "__main__":
 	app.debug = True
