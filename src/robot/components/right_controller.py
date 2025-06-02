@@ -9,7 +9,7 @@ def get_joycon_data():
 
     joystick_count = pygame.joystick.get_count()
     if joystick_count == 0:
-        print(0)
+        print("接続出来てません")
         return {"status": "disconnected", "button": {}}
 
     # 1つ目のジョイスティックを取得（Joy-Conが1台だけ接続されている前提）
@@ -20,7 +20,6 @@ def get_joycon_data():
     pygame.event.pump()
 
     # 例えば、ボタン0が "X" かどうかは Joy-Con によって異なる → 調べて使う
-    x_button = joystick.get_button(0)  # 適宜ボタン番号を変えて
-    print(x_button)
+    x_button = joystick.get_button(2)  # 適宜ボタン番号を変えて
 
     return {"status": "connected", "button": x_button}
