@@ -10,7 +10,7 @@ def run():
     now_mode = mode.changeControllMode(controller_state)
     print(mode.changeControllMode(controller_state))
 
-    motor.applyMode(now_mode)
+    # motor.applyMode(now_mode)
 
 if __name__ == '__main__':
     while True:
