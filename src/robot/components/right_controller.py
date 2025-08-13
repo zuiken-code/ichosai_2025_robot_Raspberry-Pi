@@ -39,7 +39,9 @@ def get_joycon_data():
 
     stick_value = dead_band(joystick.get_axis(stick_x),deadband)
 
-    return {"status": "connected", "x_push": x_push, "b_push": b_push, "stick_value": stick_value}
+    is_accelerator = x_push or b_push
+
+    return {"status": "connected", "x_push": x_push, "b_push": b_push, "is_accelerator": is_accelerator, "stick_value": stick_value}
 
 def main():
     while True:
