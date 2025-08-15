@@ -18,37 +18,48 @@ left_power = 0
 # よってfront_powerと同じ値になった (操作感によって変更する可能性あり)
 magnification = front_power
 
+def send_motor(left,right):
+    i2cbus.write_i2c_block_data(arduino, 0, [left, right])
+
 def set_power(stick_value,magnification):
     right = front_power + stick_value * magnification
     left = front_power - stick_value * magnification
     return right, left
 
-def moveFront():
+def moveFront(motor_connected):
     print("front")
     print(front_power,front_power)
+    if motor_connected:
+        send_motor(front_power,front_power)
 
-def stop():
+def stop(motor_connected):
     print("stop")
     print(0,0)
+    if motor_connected:
+        send_motor(0,0)
 
-def moveRight(stick_value):
+def moveRight(motor_connected, stick_value):
     right_power, left_power = set_power(stick_value,magnification)
     print("right")
     print(left_power, right_power)
+    if motor_connected:
+        send_motor(left_power,right_power)
 
-def moveLeft(stick_value):
+def moveLeft(motor_connected, stick_value):
     right_power, left_power = set_power(stick_value,magnification)
     print("left")
     print(left_power, right_power)
+    if motor_connected:
+        send_motor(left_power, right_power)
 
-def applyMode(mode,stick_value):
+def applyMode(motor_connected,mode,stick_value):
     if mode == ControllMode.Stop:
-        stop()
+        stop(motor_connected)
     elif mode == ControllMode.MoveFront:
-        moveFront()
+        moveFront(motor_connected)
     elif mode == ControllMode.MoveRight:
-        moveRight(stick_value)
+        moveRight(motor_connected,stick_value)
     elif mode == ControllMode.MoveLeft:
-        moveLeft(stick_value)
+        moveLeft(motor_connected,stick_value)
     else:
         stop()
