@@ -1,29 +1,70 @@
-
-# camera.py
-
 import cv2
+import time
 from pupil_apriltags import Detector
 
-detector = Detector()
-
 class Camera(object):
-    def __init__(self):
+    def __init__(self, width=320, height=240):
         self.video = cv2.VideoCapture(0)
+        self.video.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.video.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+        self.detector = Detector()
+
+        # FPS計測用
+        self.last_time = time.time()
+        self.fps = 0.0
 
     def __del__(self):
         self.video.release()
 
-    def get_frame(self):
+    def _update_fps(self):
+        """FPSを更新"""
+        now = time.time()
+        dt = now - self.last_time
+        if dt > 0:
+            self.fps = 1.0 / dt
+        self.last_time = now
+
+    def detect_apriltag(self):
+        """Apriltagを検出したら True を返す"""
         success, image = self.video.read()
-        
+        if not success:
+            return False
+
+        self._update_fps()
+
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        tags = detector.detect(gray)
-        for tag in tags:
-            for corner in tag.corners:
-                x, y = int(corner[0]), int(corner[1])
-                cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
-                cv2.putText(image, f"ID: {tag.tag_id}", (int(tag.center[0]), int(tag.center[1])),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-        ret, frame = cv2.imencode('.jpg', image)
-        return frame
+        tags = self.detector.detect(gray)
+
+        return len(tags) > 0
+
+    def get_fps(self):
+        """最新のFPSを返す"""
+        return self.fps
+
+
+if __name__ == "__main__":
+    cam = Camera()
+    detect_count = 0
+    was_detected = False
+
+    print("Start detecting... (Ctrl+C to stop)")
+    try:
+        while True:
+            detected = cam.detect_apriltag()
+            fps = cam.get_fps()
+
+            # 出現時にカウントを増やす
+            if detected and not was_detected:
+                detect_count += 1
+                print(f"[+] Apriltag appeared! Count = {detect_count}, FPS = {fps:.2f}")
+            elif not detected and was_detected:
+                print("[-] Apriltag disappeared")
+
+            was_detected = detected
+            time.sleep(0.1)  # 少し待つとCPU負荷軽減
+
+    except KeyboardInterrupt:
+        print("\nStopped.")
+        print(f"Total appeared count: {detect_count}")
 

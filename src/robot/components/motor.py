@@ -8,7 +8,7 @@ arduino = 0x8
 i2cbus = SMBus(1)
 
 # 前に進むときの両輪に流すパワー (0〜255)
-front_power = 20
+front_power = 125
 
 right_power = 0
 left_power = 0
@@ -19,7 +19,7 @@ left_power = 0
 magnification = front_power
 
 def send_motor(left,right):
-    i2cbus.write_i2c_block_data(arduino, 0, [left, right])
+    i2cbus.write_i2c_block_data(arduino, 0, [int(left), int(right)])
 
 def set_power(stick_value,magnification):
     right = front_power + stick_value * magnification
