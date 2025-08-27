@@ -1,6 +1,6 @@
 import cv2
+import apriltag
 import time
-from pupil_apriltags import Detector
 
 class Camera(object):
     def __init__(self, width=320, height=240):
@@ -8,7 +8,8 @@ class Camera(object):
         self.video.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.video.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
-        self.detector = Detector()
+        # apriltag detector
+        self.detector = apriltag.Detector()
 
         # FPS計測用
         self.last_time = time.time()
@@ -18,7 +19,6 @@ class Camera(object):
         self.video.release()
 
     def _update_fps(self):
-        """FPSを更新"""
         now = time.time()
         dt = now - self.last_time
         if dt > 0:
@@ -47,24 +47,35 @@ if __name__ == "__main__":
     cam = Camera()
     detect_count = 0
     was_detected = False
+    # 新たに追加する変数
+    last_detected_time = 0  # 最後に検出された時刻
+    cooldown_period = 1.0  # 再検出を許可するまでの待機時間（秒）
 
     print("Start detecting... (Ctrl+C to stop)")
     try:
         while True:
             detected = cam.detect_apriltag()
             fps = cam.get_fps()
+            now = time.time() # 現在時刻を取得
 
-            # 出現時にカウントを増やす
-            if detected and not was_detected:
-                detect_count += 1
-                print(f"[+] Apriltag appeared! Count = {detect_count}, FPS = {fps:.2f}")
-            elif not detected and was_detected:
-                print("[-] Apriltag disappeared")
+            # AprilTagが検出された場合
+            if detected:
+                # 前回検出されておらず、かつクールダウン期間が過ぎている場合
+                if not was_detected and (now - last_detected_time > cooldown_period):
+                    detect_count += 1
+                    print(f"[+] AprilTag appeared! Count = {detect_count}, FPS = {fps:.2f}")
+                
+                # 検出された時間を更新
+                last_detected_time = now
+
+            # AprilTagが非検出の場合
+            else:
+                if was_detected:
+                    print("[-] AprilTag disappeared")
 
             was_detected = detected
-            time.sleep(0.1)  # 少し待つとCPU負荷軽減
+            time.sleep(0.1)  # CPU負荷軽減
 
     except KeyboardInterrupt:
         print("\nStopped.")
         print(f"Total appeared count: {detect_count}")
-
