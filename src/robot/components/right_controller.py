@@ -25,7 +25,7 @@ def get_joycon_data():
     joystick_count = pygame.joystick.get_count()
     if joystick_count == 0:
         print("接続出来てません")
-        return {"status": "disconnected"}
+        return {"is_accelerator": False,"status": "disconnected"}
 
     # 1つ目のジョイスティックを取得（Joy-Conが1台だけ接続されている前提）
     joystick = pygame.joystick.Joystick(0)

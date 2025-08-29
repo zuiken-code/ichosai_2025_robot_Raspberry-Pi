@@ -52,8 +52,10 @@ def moveLeft(motor_connected, stick_value):
     if motor_connected:
         send_motor(left_power, right_power)
 
-def applyMode(motor_connected,mode,stick_value):
-    if mode == ControllMode.Stop:
+def applyMode(enabled,motor_connected,mode,stick_value):
+    if enabled == False:
+        stop(motor_connected)
+    elif mode == ControllMode.Stop:
         stop(motor_connected)
     elif mode == ControllMode.MoveFront:
         moveFront(motor_connected)

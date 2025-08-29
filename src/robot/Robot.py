@@ -1,17 +1,17 @@
 import time
-import mode
-import components.right_controller as right_controller
-from mode import ControllMode
-import components.motor as motor
+from robot import mode
+import robot.components.right_controller as right_controller
+from robot.mode import ControllMode
+import robot.components.motor as motor
 
-motor_connected = True
+motor_connected = False
 
-def run():
+def run(robot_state):
     controller_state = right_controller.get_joycon_data()
    
     now_mode = mode.changeControllMode(controller_state)
 
-    motor.applyMode(motor_connected,now_mode,controller_state["stick_value"])
+    motor.applyMode(robot_state["enabled"], motor_connected,now_mode,controller_state["stick_value"])
 
 if __name__ == '__main__':
     while True:

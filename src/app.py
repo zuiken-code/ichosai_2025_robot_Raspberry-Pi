@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 
+import robot.Robot as Robot
+import threading
+
 app = Flask(__name__)
 
 # グローバルで現在の状態を管理する変数
@@ -40,5 +43,10 @@ def get_state():
     return jsonify(robot_state)
 
 if __name__ == "__main__":
+    # ロボットスレッドを起動
+    t = threading.Thread(target=Robot.run, args=(robot_state,), daemon=True)
+    t.start()
+
+    # Flaskサーバー起動
     app.run(debug=True, host="0.0.0.0", port=5000)
 
