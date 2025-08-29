@@ -1,52 +1,44 @@
-import cv2
-import time
-from flask import Flask, render_template, Response, jsonify
-
-import threading
-from components.camera import Camera
-import components.right_controller as right_controller
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
+# グローバルで現在の状態を管理する変数
+robot_state = {
+    "mode": "TeleOperated",
+    "enabled": False
+}
 
-# def update_joycon_data():
-#     global joycon_data
-#     while True:
-#         joycon_data = right_controller.get_joycon_data()
-
-# # スレッドでバックグラウンド取得
-# t = threading.Thread(target=update_joycon_data, daemon=True)
-# t.start()
-
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-	return "Hello World!"
+    global robot_state
 
-@app.route("/user")
-def stream():
-	return render_template("user.html")
+    if request.method == "POST":
+        # モード変更があれば反映
+        mode = request.form.get("mode")
 
-def gen(camera):
-	while True:
-		frame = camera.get_frame()
+        
+        if mode:
+            robot_state["mode"] = mode
 
-		if frame is not None:
-			yield (b"--frame\r\n"
-				b"Content-Type: image/jpeg\r\n\r\n" + frame.tobytes() + b"\r\n")
-		else:
-			print("frame is none")
+        # enable/disable の切り替えがあれば反映
+        enable_str = request.form.get("enable")
+        if enable_str is not None:
+            robot_state["enabled"] = (enable_str.lower() == "true")
 
-@app.route("/video_feed")
-def video_feed():
-	return Response(gen(Camera()),
-			mimetype="multipart/x-mixed-replace; boundary=frame")
+        # 📌 デバッグ用に現在の状態を出力
+        print(f"[DEBUG] robot_state updated: {robot_state}")
 
+    return render_template(
+        "index.html",
+        selected_mode=robot_state["mode"],
+        enabled=robot_state["enabled"]
+    )
 
-# @app.route("/status")
-# def check_joycon():
-# 	return jsonify(joycon_data)
+# JSON API として現在の状態を取得できるエンドポイント
+@app.route("/state")
+def get_state():
+    return jsonify(robot_state)
 
 if __name__ == "__main__":
-	app.debug = True
-	app.run(host="0.0.0.0", port=5000, threaded=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
 

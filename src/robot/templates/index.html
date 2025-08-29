@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Robot Control Panel</title>
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: white;
+            font-family: "Segoe UI", sans-serif;
+            padding: 30px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .mode-panel, .status-panel {
+            background-color: #3a3a3a;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+        }
+
+        .panel-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mode-select {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .submit-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .enable-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .disable-btn {
+            background-color: #b22222;
+            color: white;
+        }
+
+        .status-display {
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        .status-display span {
+            font-weight: bold;
+        }
+
+        .enabled {
+            color: #28ff28;
+        }
+
+        .disabled {
+            color: #ff3333;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mode-panel">
+            <div class="panel-title">Select Mode</div>
+            <form method="POST" action="/">
+                <select class="mode-select" name="mode">
+                    <option value="TeleOperated" {% if selected_mode == "TeleOperated" %}selected{% endif %}>TeleOperated</option>
+                    <option value="Autonomous" {% if selected_mode == "Autonomous" %}selected{% endif %}>Autonomous</option>
+                    <option value="Practice" {% if selected_mode == "Practice" %}selected{% endif %}>Practice</option>
+                    <option value="Test" {% if selected_mode == "Test" %}selected{% endif %}>Test</option>
+                </select>
+                <button type="submit" class="submit-btn">Set Mode</button>
+            </form>
+        </div>
+
+        <div class="status-panel">
+            <div class="panel-title">Robot Status</div>
+            <form method="POST" action="/">
+                <input type="hidden" name="mode" value="{{ selected_mode }}">
+                <button type="submit" name="enable" value="true" class="submit-btn enable-btn">Enable</button>
+                <button type="submit" name="enable" value="false" class="submit-btn disable-btn">Disable</button>
+            </form>
+
+            <div class="status-display">
+                <p>Current Mode: <span>{{ selected_mode }}</span></p>
+                <p>Status:
+                    {% if enabled %}
+                        <span class="enabled">Enabled</span>
+                    {% else %}
+                        <span class="disabled">Disabled</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

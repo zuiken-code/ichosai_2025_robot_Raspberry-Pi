@@ -60,6 +60,7 @@ if __name__ == "__main__":
 
             # AprilTagが検出された場合
             if detected:
+                print("detected!!!!!!!!!!")
                 # 前回検出されておらず、かつクールダウン期間が過ぎている場合
                 if not was_detected and (now - last_detected_time > cooldown_period):
                     detect_count += 1
