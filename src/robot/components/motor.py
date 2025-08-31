@@ -54,9 +54,11 @@ def moveLeft(motor_connected, stick_value):
 
 def applyMode(enabled,motor_connected,mode,stick_value):
     if enabled == False:
+        print("not enable")
         stop(motor_connected)
     elif mode == ControllMode.Stop:
         stop(motor_connected)
+        print("mode = stop")
     elif mode == ControllMode.MoveFront:
         moveFront(motor_connected)
     elif mode == ControllMode.MoveRight:
@@ -64,4 +66,5 @@ def applyMode(enabled,motor_connected,mode,stick_value):
     elif mode == ControllMode.MoveLeft:
         moveLeft(motor_connected,stick_value)
     else:
-        stop()
+        stop(motor_connected)
+        print("else")

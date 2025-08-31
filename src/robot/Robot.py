@@ -11,6 +11,8 @@ def run(robot_state):
    
     now_mode = mode.changeControllMode(controller_state)
 
+    print(now_mode)
+
     motor.applyMode(robot_state["enabled"], motor_connected,now_mode,controller_state["stick_value"])
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ import threading
 
 app = Flask(__name__)
 
-# グローバルで現在の状態を管理する変数
+# グローバルで現在の状態を管理する
 robot_state = {
     "mode": "TeleOperated",
     "enabled": False
@@ -34,13 +34,12 @@ def index():
     return render_template(
         "index.html",
         selected_mode=robot_state["mode"],
-        enabled=robot_state["enabled"]
+        enabled=robot_state["enabled"],
     )
 
-# JSON API として現在の状態を取得できるエンドポイント
-@app.route("/state")
-def get_state():
-    return jsonify(robot_state)
+@app.route("/status", methods=["GET"])
+def get_status():
+    return jsonify({"now_mode": str(Robot.get_mode().name)})
 
 if __name__ == "__main__":
     # ロボットスレッドを起動
