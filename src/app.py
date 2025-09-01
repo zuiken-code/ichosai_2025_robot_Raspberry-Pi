@@ -43,7 +43,7 @@ def get_status():
 
 if __name__ == "__main__":
     # ロボットスレッドを起動
-    t = threading.Thread(target=Robot.run, args=(robot_state,), daemon=True)
+    t = threading.Thread(target=Robot.loop, args=(robot_state,), daemon=True)
     t.start()
 
     # Flaskサーバー起動

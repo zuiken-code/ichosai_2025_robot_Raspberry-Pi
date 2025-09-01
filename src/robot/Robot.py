@@ -7,13 +7,23 @@ import robot.components.motor as motor
 motor_connected = False
 
 def run(robot_state):
+    global now_mode
+
     controller_state = right_controller.get_joycon_data()
-   
+
     now_mode = mode.changeControllMode(controller_state)
 
     print(now_mode)
 
     motor.applyMode(robot_state["enabled"], motor_connected,now_mode,controller_state["stick_value"])
+
+def get_mode():
+    return now_mode
+
+def loop(robot_state):
+    while True:
+        run(robot_state)
+        time.sleep(0.01)
 
 if __name__ == '__main__':
     while True:
