@@ -6,6 +6,12 @@ import robot.components.motor as motor
 
 motor_connected = False
 
+# グローバルで現在の状態を管理する
+robot_state = {
+    "mode": "TeleOperated",
+    "enabled": False
+}
+
 def run(robot_state):
     global now_mode
 
@@ -20,7 +26,13 @@ def run(robot_state):
 def get_mode():
     return now_mode
 
-def loop(robot_state):
+def set_enable():
+    robot_state["enabled"] = True
+
+def set_disable():
+    robot_state["enabled"] = False
+
+def loop():
     while True:
         run(robot_state)
         time.sleep(0.01)

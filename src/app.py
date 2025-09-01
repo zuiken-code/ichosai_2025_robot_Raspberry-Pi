@@ -28,6 +28,11 @@ def index():
         if enable_str is not None:
             robot_state["enabled"] = (enable_str.lower() == "true")
 
+        if robot_state["enabled"] == True:
+            Robot.set_enable()
+        else:
+            Robot.set_disable()
+
         # 📌 デバッグ用に現在の状態を出力
         print(f"[DEBUG] robot_state updated: {robot_state}")
 
@@ -37,13 +42,11 @@ def index():
         enabled=robot_state["enabled"],
     )
 
-@app.route("/status", methods=["GET"])
-def get_status():
-    return jsonify({"now_mode": str(Robot.get_mode().name)})
+
 
 if __name__ == "__main__":
     # ロボットスレッドを起動
-    t = threading.Thread(target=Robot.loop, args=(robot_state,), daemon=True)
+    t = threading.Thread(target=Robot.loop, args=(), daemon=True)
     t.start()
 
     # Flaskサーバー起動
