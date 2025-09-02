@@ -114,28 +114,11 @@
                         <span class="disabled">Disabled</span>
                     {% endif %}
                 </p>
-		<p>現在のモード: <span id="modeDisplay">読み込み中...</span></p>
             </div>
         </div>
     </div>
 </body>
 
-<script>
-function updateMode() {
-    fetch("/status")
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("modeDisplay").textContent = data.now_mode;
-        })
-        .catch(err => console.error("Error fetching status:", err));
-}
-
-// 1秒ごとに更新
-setInterval(updateMode, 1000);
-
-// ページ読み込み時に1回実行
-updateMode();
-</script>
 
 </html>
 

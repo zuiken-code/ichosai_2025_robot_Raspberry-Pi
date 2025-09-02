@@ -15,24 +15,23 @@ robot_state = {
 def index():
     global robot_state
 
-    if request.method == "POST":
+    #if request.method == "POST":
         # モード変更があれば反映
-        mode = request.form.get("mode")
+        #mode = request.form.get("mode")
 
         
-        if mode:
-            robot_state["mode"] = mode
+        #if mode:
+            #robot_state["mode"] = mode
 
         # enable/disable の切り替えがあれば反映
-        enable_str = request.form.get("enable")
-        if enable_str is not None:
-            robot_state["enabled"] = (enable_str.lower() == "true")
-
-        if robot_state["enabled"] == True:
-            Robot.set_enable()
-        else:
-            Robot.set_disable()
-
+    if request.method == "POST":
+        enable_value = request.form.get("enable")
+        if enable_value == "true":
+            print("enabled")   # Enable ボタンが押されたとき
+            robot_state["enabled"] = True
+        elif enable_value == "false":
+            print("disabled")  # Disable ボタンが押されたとき
+            robot_state["enabled"] = False
         # 📌 デバッグ用に現在の状態を出力
         print(f"[DEBUG] robot_state updated: {robot_state}")
 
@@ -46,8 +45,8 @@ def index():
 
 if __name__ == "__main__":
     # ロボットスレッドを起動
-    t = threading.Thread(target=Robot.loop, args=(), daemon=True)
-    t.start()
+    t = threading.Thread(target=Robot.loop, args=(robot_state,), daemon=True)
+    #t.start()
 
     # Flaskサーバー起動
     app.run(debug=True, host="0.0.0.0", port=5000)
