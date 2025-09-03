@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 
 import robot.Robot as Robot
 import threading
@@ -12,39 +12,39 @@ robot_state = {
     "enabled": False
 }
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/set_mode", methods=["POST"])
+def set_mode():
+    mode = request.form.get("mode")
+    if mode:
+        robot_state["mode"] = mode
+    print(f"[DEBUG] Mode set: {robot_state}")
+    return redirect("/")
+
+@app.route("/set_enable", methods=["POST"])
+def set_enable():
+    enable_value = request.form.get("enable")
+    robot_state["enabled"] = (enable_value == "true")
+    print("[DEBUG] /set_enable called:", robot_state)
+    return redirect("/")
+
+
+@app.route("/", methods=["GET"])
 def index():
     global robot_state
-
-    #if request.method == "POST":
-        # モード変更があれば反映
-        #mode = request.form.get("mode")
-
-        
-        #if mode:
-            #robot_state["mode"] = mode
-
-        # enable/disable の切り替えがあれば反映
-    if request.method == "POST":
-        enable_value = request.form.get("enable")
-        if enable_value == "true":
-            print("enabled")   # Enable ボタンが押されたとき
-            robot_state["enabled"] = True
-        elif enable_value == "false":
-            print("disabled")  # Disable ボタンが押されたとき
-            robot_state["enabled"] = False
-        # 📌 デバッグ用に現在の状態を出力
-        print(f"[DEBUG] robot_state updated: {robot_state}")
-
     return render_template(
         "index.html",
         selected_mode=robot_state["mode"],
         enabled=robot_state["enabled"],
     )
 
+
 def print_state():
+    last = None
     while True:
-        print(robot_state)
+        if robot_state != last:
+            print("[MONITOR]", robot_state)
+            last = robot_state.copy()
+
         time.sleep(0.1)
 
 

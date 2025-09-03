@@ -86,7 +86,7 @@
     <div class="container">
         <div class="mode-panel">
             <div class="panel-title">Select Mode</div>
-            <form method="POST" action="/">
+            <form method="POST" action="set_mode">
                 <select class="mode-select" name="mode">
                     <option value="TeleOperated" {% if selected_mode == "TeleOperated" %}selected{% endif %}>TeleOperated</option>
                     <option value="Autonomous" {% if selected_mode == "Autonomous" %}selected{% endif %}>Autonomous</option>
@@ -99,7 +99,7 @@
 
         <div class="status-panel">
             <div class="panel-title">Robot Status</div>
-            <form method="POST" action="/">
+            <form method="POST" action="/set_enable">
                 <input type="hidden" name="mode" value="{{ selected_mode }}">
                 <button type="submit" name="enable" value="true" class="submit-btn enable-btn">Enable</button>
                 <button type="submit" name="enable" value="false" class="submit-btn disable-btn">Disable</button>
