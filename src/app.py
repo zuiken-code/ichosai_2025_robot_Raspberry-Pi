@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 
 import robot.Robot as Robot
 import threading
+import time
 
 app = Flask(__name__)
 
@@ -41,12 +42,18 @@ def index():
         enabled=robot_state["enabled"],
     )
 
+def print_state():
+    while True:
+        print(robot_state)
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":
     # ロボットスレッドを起動
-    t = threading.Thread(target=Robot.loop, args=(robot_state,), daemon=True)
+    #t = threading.Thread(target=Robot.loop, args=(robot_state,), daemon=True)
     #t.start()
+    t = threading.Thread(target=print_state, daemon=True)
+    t.start()
 
     # Flaskサーバー起動
     app.run(debug=True, host="0.0.0.0", port=5000)
