@@ -17,20 +17,20 @@ def run(robot_state):
 
     motor.applyMode(robot_state["enabled"], motor_connected,now_mode,controller_state["stick_value"])
 
-def get_mode():
-    return now_mode
 
-def set_enable():
-    robot_state["enabled"] = True
-    print("set_enable")
+def get_state(state):
+    global robot_state
+    robot_state = state
+    print(robot_state)
 
 def set_disable():
     robot_state["enabled"] = False
     print("set_disable")
 
-def loop(robot_state):
+def loop():
     while True:
-        run(robot_state)
+        print(robot_state)
+        #run(robot_state)
         time.sleep(0.01)
 
 if __name__ == '__main__':

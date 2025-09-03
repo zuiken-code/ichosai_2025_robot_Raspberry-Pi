@@ -37,13 +37,19 @@ def index():
         enabled=robot_state["enabled"],
     )
 
+@app.route("/state")
+def get_state():
+    return jsonify(robot_state)
 
 def print_state():
     last = None
     while True:
         if robot_state != last:
             print("[MONITOR]", robot_state)
+            Robot.get_state(robot_state)
             last = robot_state.copy()
+
+        #Robot.loop()
 
         time.sleep(0.1)
 
