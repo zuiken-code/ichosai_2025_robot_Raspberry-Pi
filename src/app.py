@@ -45,11 +45,11 @@ def print_state():
     last = None
     while True:
         if robot_state != last:
-            print("[MONITOR]", robot_state)
+            #print("[MONITOR]", robot_state)
             Robot.get_state(robot_state)
             last = robot_state.copy()
 
-        #Robot.loop()
+        Robot.loop()
 
         time.sleep(0.1)
 
