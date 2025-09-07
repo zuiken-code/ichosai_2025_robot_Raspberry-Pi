@@ -26,6 +26,8 @@ def run(robot_state):
     if ids:
         detected_ids_list.extend(ids)
         unique_ids = set(detected_ids_list)  # 重複削除した集合を作成
+        global score
+        score = cam.get_score(unique_ids)
         print(f"Detected IDs: {unique_ids}, FPS = {fps:.2f}")
 
 def get_robot_state():

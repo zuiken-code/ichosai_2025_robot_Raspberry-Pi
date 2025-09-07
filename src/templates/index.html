@@ -114,9 +114,31 @@
                         <span class="disabled">Disabled</span>
                     {% endif %}
                 </p>
+		 <p>Detected IDs: <span id="detected-ids">[]</span></p>
+		 <p>Score: <span id="detected-score">0</span></p>
             </div>
         </div>
     </div>
+
+    <script>
+    async function fetchStatus() {
+        try {
+            const response = await fetch("/score");
+            const data = await response.json();
+
+            document.getElementById("detected-ids").textContent = data.id;
+            document.getElementById("detected-score").textContent = data.score;
+        } catch (error) {
+            console.error("Error fetching status:", error);
+        }
+    }
+
+    // 1秒ごとに更新
+    setInterval(fetchStatus, 1000);
+
+    // ページ読み込み時にも即実行
+    fetchStatus();
+    </script>
 </body>
 
 

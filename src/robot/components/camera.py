@@ -33,6 +33,7 @@ class Camera(object):
         """
         success, image = self.video.read()
         if not success:
+            print("カメラが認識していません")
             return []
 
         self._update_fps()
@@ -46,6 +47,12 @@ class Camera(object):
         """最新のFPSを返す"""
         return self.fps
 
+    def get_data(self,unique_ids):
+        data = {
+        "id": list(unique_ids),   # setをそのままJSONに書けないのでlist化
+        "score": len(unique_ids)  # 要素数
+        }
+        return data
 
 if __name__ == "__main__":
     cam = Camera()

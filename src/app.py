@@ -41,6 +41,14 @@ def index():
 def get_state():
     return jsonify(robot_state)
 
+@app.route("/score")
+def status():
+    data = {
+    "id": [3, 5, 7, 9],
+    "score": 4
+    }
+    return jsonify(data)
+
 def print_state():
     last = None
     while True:
