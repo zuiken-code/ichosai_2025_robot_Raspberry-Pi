@@ -4,6 +4,7 @@ import requests
 import robot.components.right_controller as right_controller
 from robot.mode import ControllMode
 import robot.components.motor as motor
+from robot.components.camera import Camera
 
 motor_connected = False
 
@@ -14,9 +15,18 @@ def run(robot_state):
 
     now_mode = mode.changeControllMode(controller_state)
 
-    print(robot_state)
+    #print(robot_state)
 
     motor.applyMode(robot_state["enabled"], motor_connected,now_mode,controller_state["stick_value"])
+
+    #カメラ処理
+    ids = cam.detect_apriltag_ids()
+    fps = cam.get_fps()
+
+    if ids:
+        detected_ids_list.extend(ids)
+        unique_ids = set(detected_ids_list)  # 重複削除した集合を作成
+        print(f"Detected IDs: {unique_ids}, FPS = {fps:.2f}")
 
 def get_robot_state():
     try:
@@ -38,10 +48,15 @@ def set_disable():
     print("set_disable")
 
 def loop():
+    global cam
+    global detected_ids_list
+
+    detected_ids_list = []  # 検出IDを保存するリスト
+    cam = Camera()
     while True:
         robot_state = get_robot_state()
-        print(robot_state)
-        #run(robot_state)
+        #print(robot_state)
+        run(robot_state)
         time.sleep(0.01)
 
 if __name__ == '__main__':

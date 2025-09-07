@@ -60,7 +60,6 @@ if __name__ == "__main__":
     #t.start()
     t = threading.Thread(target=print_state, daemon=True)
     t.start()
-
     # Flaskサーバー起動
     app.run(debug=True, host="0.0.0.0", port=5000)
 
