@@ -20,15 +20,15 @@ def run(robot_state):
     motor.applyMode(robot_state["enabled"], motor_connected,now_mode,controller_state["stick_value"])
 
     #カメラ処理
-    ids = cam.detect_apriltag_ids()
-    fps = cam.get_fps()
+    #ids = cam.detect_apriltag_ids()
+    #fps = cam.get_fps()
 
-    if ids:
-        detected_ids_list.extend(ids)
-        unique_ids = set(detected_ids_list)  # 重複削除した集合を作成
-        global score
-        score = cam.get_score(unique_ids)
-        print(f"Detected IDs: {unique_ids}, FPS = {fps:.2f}")
+    #if ids:
+    #    detected_ids_list.extend(ids)
+    #    unique_ids = set(detected_ids_list)  # 重複削除した集合を作成
+    #    global score
+    #    score = cam.get_data(unique_ids)
+    #    print(f"Detected IDs: {unique_ids}, FPS = {fps:.2f}")
 
 def get_robot_state():
     try:

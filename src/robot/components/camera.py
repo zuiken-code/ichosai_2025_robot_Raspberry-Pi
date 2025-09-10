@@ -5,7 +5,7 @@ import time
 class Camera(object):
     def __init__(self, width=320, height=240):
         print("カメラのモジュールが読み込まれました")
-        self.video = cv2.VideoCapture(0)
+        self.video = cv2.VideoCapture(0,cv2.CAP_V4L2)
         self.video.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.video.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 

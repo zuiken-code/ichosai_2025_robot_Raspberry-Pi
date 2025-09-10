@@ -2,7 +2,10 @@ import time
 import pygame
 import os
 
+# ダミービデオドライバ設定（表示なしで使うため）
 os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+# pygameの初期化はモジュール読み込み時に一度だけ
 pygame.init()
 pygame.joystick.init()
 
@@ -19,29 +22,34 @@ def dead_band(number, deadband):
         return number
 
 def get_joycon_data():
-    pygame.joystick.quit()
-    pygame.joystick.init()
-
     joystick_count = pygame.joystick.get_count()
     if joystick_count == 0:
-        print("接続出来てません")
-        return {"is_accelerator": False,"status": "disconnected"}
+        return {"is_accelerator": False, "status": "disconnected"}
 
-    # 1つ目のジョイスティックを取得（Joy-Conが1台だけ接続されている前提）
+    # 最初のジョイスティックを取得
     joystick = pygame.joystick.Joystick(0)
-    joystick.init()
 
-    # イベントポンプを通さないとボタン状態が更新されない
+    # joystick.init() は一度だけで十分（ここでは毎回呼ばなくても良い）
+    if not joystick.get_init():
+        joystick.init()
+
+    # 状態更新
     pygame.event.pump()
 
     x_push = joystick.get_button(X_button)
     b_push = joystick.get_button(B_button)
 
-    stick_value = dead_band(joystick.get_axis(stick_x),deadband)
+    stick_value = dead_band(joystick.get_axis(stick_x), deadband)
 
     is_accelerator = x_push or b_push
 
-    return {"status": "connected", "x_push": x_push, "b_push": b_push, "is_accelerator": is_accelerator, "stick_value": stick_value}
+    return {
+        "status": "connected",
+        "x_push": x_push,
+        "b_push": b_push,
+        "is_accelerator": is_accelerator,
+        "stick_value": stick_value,
+    }
 
 def main():
     while True:
@@ -50,3 +58,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
