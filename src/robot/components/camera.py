@@ -5,7 +5,7 @@ import time
 class Camera(object):
     def __init__(self, width=320, height=240):
         print("カメラのモジュールが読み込まれました")
-        self.video = cv2.VideoCapture(0,cv2.CAP_V4L2)
+        self.video = cv2.VideoCapture(0, cv2.CAP_V4L2)
         self.video.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         self.video.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
@@ -16,6 +16,10 @@ class Camera(object):
         # FPS計測用
         self.last_time = time.time()
         self.fps = 0.0
+
+        # 検出IDを蓄積
+        self.detected_ids_list = []
+        self.data = {"id": [], "score": 0}
 
     def __del__(self):
         self.video.release()
@@ -28,51 +32,51 @@ class Camera(object):
         self.last_time = now
 
     def detect_apriltag_ids(self):
-        """
-        検出されたAprilTagのIDリストを返す（なければ空リスト）
-        """
         success, image = self.video.read()
         if not success:
             print("カメラが認識していません")
             return []
 
         self._update_fps()
-
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         tags = self.detector.detect(gray)
 
         return [tag.tag_id for tag in tags]
 
+    def run(self):
+        """1回分だけカメラを見て data を更新"""
+        ids = self.detect_apriltag_ids()
+        if ids:
+            self.detected_ids_list.extend(ids)
+            unique_ids = set(self.detected_ids_list)
+            self.data = {
+                "id": list(unique_ids),
+                "score": len(unique_ids)
+            }
+
+    def reset(self):
+        """検出結果をリセット"""
+        self.detected_ids_list = []
+        self.data = {"id": [], "score": 0}
+
+    def get_data(self):
+        """最新の data を返す"""
+        return dict(self.data)
+
     def get_fps(self):
-        """最新のFPSを返す"""
         return self.fps
 
-    def get_data(self,unique_ids):
-        data = {
-        "id": list(unique_ids),   # setをそのままJSONに書けないのでlist化
-        "score": len(unique_ids)  # 要素数
-        }
-        return data
 
 if __name__ == "__main__":
     cam = Camera()
-    detected_ids_list = []  # 検出IDを保存するリスト
 
     print("Start detecting... (Ctrl+C to stop)")
     try:
         while True:
-            ids = cam.detect_apriltag_ids()
-            fps = cam.get_fps()
-
-            if ids:
-                detected_ids_list.extend(ids)
-                unique_ids = set(detected_ids_list)  # 重複削除した集合を作成
-                print(f"Detected IDs: {unique_ids}, FPS = {fps:.2f}")
-
+            cam.run()  # ここで1回分更新
+            print(cam.get_data(), f"FPS = {cam.get_fps():.2f}")
             time.sleep(0.1)
-
     except KeyboardInterrupt:
         print("\nStopped.")
-        unique_ids = set(detected_ids_list)
-        print(f"Final unique detected IDs: {unique_ids}")
+        print("Final data:", cam.get_data())
 

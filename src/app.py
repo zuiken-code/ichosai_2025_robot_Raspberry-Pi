@@ -1,10 +1,16 @@
 from flask import Flask, render_template, request, jsonify, redirect
-
+from robot.components.camera import Camera
 import robot.Robot as Robot
 import threading
 import time
 
 app = Flask(__name__)
+cam = Camera()
+
+def camera_loop():
+    while True:
+        cam.run()
+        time.sleep(0.1)
 
 # グローバルで現在の状態を管理する
 robot_state = {
@@ -47,7 +53,7 @@ def status():
     "id": [3, 5, 7, 9],
     "score": 4
     }
-    return jsonify(data)
+    return jsonify(cam.get_data())
 
 def print_state():
     last = None
@@ -63,9 +69,10 @@ def print_state():
 
 
 if __name__ == "__main__":
+
+    c = threading.Thread(target=camera_loop, daemon=True)
+    c.start()
     # ロボットスレッドを起動
-    #t = threading.Thread(target=Robot.loop, args=(robot_state,), daemon=True)
-    #t.start()
     t = threading.Thread(target=print_state, daemon=True)
     t.start()
     # Flaskサーバー起動
