@@ -34,7 +34,7 @@ class Camera(object):
     def detect_apriltag_ids(self):
         success, image = self.video.read()
         if not success:
-            print("カメラが認識していません")
+            #print("カメラが認識していません")
             return []
 
         self._update_fps()

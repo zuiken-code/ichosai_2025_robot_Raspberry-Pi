@@ -1,17 +1,21 @@
 import time
 from robot import mode
 import requests
+
 import robot.components.right_controller as right_controller
+import robot.components.left_controller as left_controller
+
 from robot.mode import ControllMode
 import robot.components.motor as motor
 from robot.components.camera import Camera
 
-motor_connected = False
+motor_connected = True
 
 def run(robot_state):
     global now_mode
 
     controller_state = right_controller.get_joycon_data()
+    #controller_state = left_controller.get_joycon_data()
 
     now_mode = mode.changeControllMode(controller_state)
 
