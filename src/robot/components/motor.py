@@ -18,8 +18,16 @@ left_power = 0
 # よってfront_powerと同じ値になった (操作感によって変更する可能性あり)
 magnification = front_power
 
-def send_motor(left,right):
-    i2cbus.write_i2c_block_data(arduino, 0, [int(left), int(right)])
+def send_motor(left, right):
+    """モーターにパワーを送る（I2C）。例外が起きても無視して再試行可能"""
+    try:
+        i2cbus.write_i2c_block_data(arduino, 0, [int(left), int(right)])
+    except Exception as e:
+        # すべての例外を捕まえて警告だけ出す
+        print(f"[WARN] I2C送信中に例外発生: {e}")
+        # 再送は次回send_motor呼び出し時に行われる
+
+
 
 def set_power(stick_value,magnification):
     right = front_power + stick_value * magnification

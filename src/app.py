@@ -71,7 +71,7 @@ def print_state():
 if __name__ == "__main__":
 
     c = threading.Thread(target=camera_loop, daemon=True)
-    c.start()
+    #c.start()
     # ロボットスレッドを起動
     t = threading.Thread(target=print_state, daemon=True)
     t.start()
