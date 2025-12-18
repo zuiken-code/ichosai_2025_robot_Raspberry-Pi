@@ -80,24 +80,32 @@ AprilTag を用いた自己位置推定・制御のコードも実装してい�
 
 1. リポジトリをクローンします。
 
-   git clone https://github.com/zuiken-code/ichosai_2025_robot_Raspberry-Pi.git  
+   ```
+   git clone https://github.com/zuiken-code/ichosai_2025_robot_Raspberry-Pi.git
    cd ichosai_2025_robot_Raspberry-Pi
+   ```
 
 2. 必要な Python ライブラリをインストールします。
 
+   ```
    pip install flask pygame requests smbus opencv-python
+   ```
 
 3. Joy-Con 用ドライバーをインストールします。
 
-   git clone https://github.com/nicman23/dkms-hid-nintendo.git  
+   ```
+   git clone https://github.com/nicman23/dkms-hid-nintendo
    cd dkms-hid-nintendo
+
    sudo dkms add .
    sudo dkms build nintendo -v 3.2
    sudo dkms install nintendo -v 3.2
+   ```
 
 4. Raspberry Pi を再起動します。
-
+   ```
    sudo reboot
+   ```
 
 ---
 
@@ -107,11 +115,15 @@ AprilTag を用いた自己位置推定・制御のコードも実装してい�
 
 2. Flask アプリケーションを起動します。
 
+   ```
    python app.py
+   ```
 
 3. Web ブラウザで以下の URL にアクセスします。
 
+   ```
    http://<RaspberryPi の IP>:5000
+   ```
 
 4. Web UI からロボットの enable / disable を切り替え、  
    Joy-Con を使ってロボットを操作します。
